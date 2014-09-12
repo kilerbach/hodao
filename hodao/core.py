@@ -4,10 +4,13 @@ Created on 2014-9-2
 @author: ilcwd
 """
 import json
+import logging
 
 import flask
 
 application = flask.Flask(__name__)
+
+spy_logger = logging.getLogger('hodao.spy')
 
 
 class C(object):
@@ -21,7 +24,6 @@ class C(object):
     DB_FILE = None
     SERVER_MANAGEMENT_MAGIC_WORD = None
     WECHAT_API = None
-
 
     @classmethod
     def load_config(cls, config_file):

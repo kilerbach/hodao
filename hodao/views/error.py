@@ -4,15 +4,18 @@
 Author: ilcwd
 """
 import traceback
+import logging
 
 from flask import render_template
 
 from hodao.core import application
 
 
+_logger = logging.getLogger(__name__)
+
 @application.errorhandler(500)
 def error_handler(ex):
-    print traceback.format_exc()
+    _logger.error("Exception <%s>, Traceback: %s", str(ex), traceback.format_exc())
     return render_template('error.html', msg=u'服务器异常')
 
 

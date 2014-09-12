@@ -1,6 +1,6 @@
 {
 
-    "DEBUG": false,
+    "DEBUG": true,
 
     "SERVER_SESSION_KEY": "_your_flask_session_key_",
 

@@ -12,7 +12,7 @@ formatters:
 handlers:
   console:
     class: logging.StreamHandler
-    level: ERROR
+    level: WARN
     formatter: simple
     stream: ext://sys.stdout
   request:
@@ -20,11 +20,6 @@ handlers:
     level: INFO
     formatter: basic
     filename: /data/logs/hodao/request.log
-  info:
-    class: logging.handlers.WatchedFileHandler
-    level: INFO
-    formatter: simple
-    filename: /data/logs/hodao/info.log
   spy:
     class: logging.handlers.WatchedFileHandler
     level: INFO
@@ -44,10 +39,10 @@ loggers:
     qualname: hodao.spy
   info_logger:
     level: INFO
-    handlers: [info]
+    handlers: [console]
     propagate: no
     qualname: hodao
 
 root:
   level: ERROR
-  handlers: [info]
+  handlers: [console]

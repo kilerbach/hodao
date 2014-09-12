@@ -4,8 +4,9 @@ Created on 2014-9-2
 
 @author: ilcwd
 """
-
+import time
 import datetime
+import functools
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String, DateTime
@@ -13,7 +14,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Index
 
-from hodao.core import C
+from hodao.core import C, spy_logger
 
 
 Base = declarative_base()
@@ -45,6 +46,22 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
 
+def _log_costtime(func):
+    name = __name__ + '.' + func.__name__
+    @functools.wraps(func)
+    def wrapper(*a, **kw):
+        st = time.time()
+        try:
+            return func(*a, **kw)
+        finally:
+            ct = time.time() - st
+
+            spy_logger.info("%s - %dms", name, int(ct))
+
+    return wrapper
+
+
+@_log_costtime
 def create_order(user, name, company, phone):
     # A DBSession() instance establishes all conversations with the database
     # and represents a "staging zone" for all the objects loaded into the
@@ -60,16 +77,19 @@ def create_order(user, name, company, phone):
     session.commit()
 
 
+@_log_costtime
 def query_orders(user):
     session = DBSession()
     return session.query(Order).filter(Order.user == user).order_by(Order.status, Order.created_time).all()
 
 
+@_log_costtime
 def query_all_orders():
     session = DBSession()
     return session.query(Order).order_by(Order.status, Order.created_time).all()
 
 
+@_log_costtime
 def update_orders(order_id, status):
     now = datetime.datetime.now()
     session = DBSession()
