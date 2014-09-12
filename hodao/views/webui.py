@@ -82,7 +82,13 @@ def manage_orders():
 def update_order():
     order_id = request.form['order_id']
     status = request.form['status']
-    models.update_orders(order_id, int(status))
+
+    # check permission
+    user = flask.session.get('user')
+    if not (user or flask.session.get('admin')):
+        return render_template('error.html', msg=u"请先登录")
+
+    models.update_order(order_id, int(status), user or None)
     redirect_url = request.form.get('next')
     if redirect_url:
         return flask.redirect(redirect_url)

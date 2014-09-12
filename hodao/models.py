@@ -1,4 +1,4 @@
-#coding:utf8
+# coding:utf8
 """
 Created on 2014-9-2
 
@@ -33,6 +33,11 @@ class Order(Base):
     created_time = Column(DateTime(), nullable=False)
     modified_time = Column(DateTime(), nullable=False)
 
+
+class Status(object):
+    pass
+
+
 Index('_idx_order_user', Order.user)
 
 # Create an engine that stores data in the local directory's
@@ -42,12 +47,13 @@ engine = create_engine(C.DB_FILE, echo=C.DEBUG)
 # Bind the engine to the metadata of the Base class so that the
 # declaratives can be accessed through a DBSession instance
 Base.metadata.bind = engine
- 
+
 DBSession = sessionmaker(bind=engine)
 
 
 def _log_costtime(func):
     name = __name__ + '.' + func.__name__
+
     @functools.wraps(func)
     def wrapper(*a, **kw):
         st = time.time()
@@ -90,23 +96,34 @@ def query_all_orders():
 
 
 @_log_costtime
-def update_orders(order_id, status):
+def update_order(order_id, status, user=None):
+    """
+    :param order_id:
+    :param status:
+    :param user:
+    :return:
+        -1 - error
+        0 - order not found
+        1 - success
+    """
+    # TODO:
+    if not (0 <= status <= 5):
+        return -1
+
     now = datetime.datetime.now()
+    update_params = {'status': status, 'modified_time': now}
     session = DBSession()
-    session.query(Order)\
-        .filter(Order.id == order_id)\
-        .update({'status': status, 'modified_time': now})
+    if user:
+        rows = session.query(Order) \
+            .filter(Order.id == order_id) \
+            .filter(Order.user == user) \
+            .update(update_params)
+    else:
+        rows = session.query(Order) \
+            .filter(Order.id == order_id) \
+            .update(update_params)
     session.commit()
-    return
+    return rows
 
-
-def main():
-    session = DBSession()
-    for i in session.query(Order).all():
-        print i.id, i.user, i.name, i.company, i.status
-
-        
-if __name__ == '__main__':
-    main()
 
 
