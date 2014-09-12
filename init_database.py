@@ -3,6 +3,9 @@ Created on 2014-9-2
 
 @author: ilcwd
 """
+# init config first!
+import wsgiapp
+
 from hodao.models import Base, engine
 
 
