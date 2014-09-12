@@ -18,11 +18,6 @@ def serve_static(name):
     return application.send_static_file(name)
 
 
-@application.route('/favicon.ico')
-def favicon():
-    return application.send_static_file('favicon.ico')
-
-
 @application.route('/')
 def index():
     return render_template('index.html')
