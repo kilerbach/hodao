@@ -97,6 +97,32 @@ def wechat_api_rpc(path=C.WECHAT_API, post=None, server_token=C.WECHAT_TOKEN):
     return result
 
 
+def web_rpc(path, post=None, get=None):
+    # werkzeug.test.Client donot set REMOTE_ADDR!
+    environ_overrides = {'REMOTE_ADDR': '127.0.0.1'}
+
+    method = 'GET'
+
+    if post:
+        post = urllib.urlencode(post)
+        method = 'POST'
+
+    if get:
+        get = urllib.urlencode(get)
+        path = path + '?' + get
+
+    # open request
+    resp, status, headers = CLIENT.open(path=path, method=method,
+                                        content_type='application/x-www-form-urlencoded',
+                                        data=post,
+                                        environ_overrides=environ_overrides)
+
+    # validation
+    assert status.startswith('200'), status
+    result = ''.join(resp)
+    return result
+
+
 class BaseRequest(object):
     _TEMPLATE = None
 
