@@ -28,6 +28,7 @@
                 <td>{{ order.phone }}</td>
 
                 <td><form method="post" action="/order/update">
+                    <input name="_csrf_token" type=hidden value="{{ csrf_token() }}">
                     <input name="order_id" type="hidden" value="{{ order.id }}"/>
                     <input name="status" id="order_status_{{ order.id }}" type="hidden" value="0" />
                 {% if session.admin %}

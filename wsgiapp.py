@@ -23,6 +23,8 @@ with open(logging_config_path, 'r') as f:
 
 C.load_config(os.path.join(DEPLOYMENT_DIR, 'config.json'))
 
+application.secret_key = C.SERVER_SESSION_KEY
+
 # register views
 from hodao.views import *
 

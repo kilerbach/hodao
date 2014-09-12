@@ -13,7 +13,7 @@
       <div class="row">
 
           <form class="form-horizontal" method="post" action="/order/create" role="form"  onsubmit='return validateCreateOrderForm()'>
-
+              <input name="_csrf_token" type=hidden value="{{ csrf_token() }}">
               <div class="form-group">
                   <label class="col-sm-4 control-label" for="inputCompany">快递公司</label>
                   <div class="col-sm-4">
