@@ -1,0 +1,4 @@
+PyYAML
+Flask
+SQLAlchemy
+git+https://github.com/ilcwd/wechat-server

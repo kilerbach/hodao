@@ -1,0 +1,53 @@
+version: 1
+disable_existing_loggers: no
+
+formatters:
+  simple:
+    format: '%(asctime)s [%(levelname)s][%(name)s] %(message)s'
+  basic:
+    format: '%(asctime)s [%(levelname)s] %(message)s'
+  reduced:
+    format: '%(asctime)s %(message)s'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: ERROR
+    formatter: simple
+    stream: ext://sys.stdout
+  request:
+    class: logging.handlers.WatchedFileHandler
+    level: INFO
+    formatter: basic
+    filename: /data/logs/hodao/request.log
+  info:
+    class: logging.handlers.WatchedFileHandler
+    level: INFO
+    formatter: simple
+    filename: /data/logs/hodao/info.log
+  spy:
+    class: logging.handlers.WatchedFileHandler
+    level: INFO
+    formatter: reduced
+    filename: /data/logs/hodao/costtime.log
+
+loggers:
+  request_logger:
+    level: INFO
+    handlers: [request]
+    propagate: no
+    qualname: hodao.request
+  spy_logger:
+    level: INFO
+    handlers: [spy]
+    propagate: no
+    qualname: hodao.spy
+  info_logger:
+    level: INFO
+    handlers: [info]
+    propagate: no
+    qualname: hodao
+
+root:
+  level: ERROR
+  handlers: [info]

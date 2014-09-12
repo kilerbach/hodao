@@ -1,0 +1,20 @@
+{
+
+    "DEBUG": false,
+
+    "SERVER_SESSION_KEY": "_your_flask_session_key_",
+
+    "WECHAT_TOKEN": "_your_wechat_token_",
+
+    "SERVER_SIGNATURE_KEY": "_your_login_url_signatrue_key_",
+
+    "SERVER_LOGIN_URL": "http://127.0.0.1:8080/login",
+
+    "SERVER_MANAGEMENT_MAGIC_WORD": "destructs.plough.mangier",
+
+    "DB_FILE": "sqlite:////data/db/hodao.db",
+
+    "LOGIN_URL_EXPIRES": 600000,
+
+    "WECHAT_API": "/api/wechat"
+}

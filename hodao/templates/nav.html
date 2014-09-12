@@ -1,0 +1,17 @@
+
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="nav nav-tabs navbar-inverse" role="tablist">
+          <li><a href="/">Ho道</a></li>
+          <li><a href="/">新建Ho单</a></li>
+
+          {% if session.admin %}
+            <li><a href="/order/manage">管理Ho单</a></li>
+          {% else%}
+            <li><a href="/order">查看Ho单</a></li>
+          {% endif %}
+        </ul>
+    </div>
+</div>
+
+<div class="row" style="margin:20px"></div>

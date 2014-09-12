@@ -1,0 +1,63 @@
+{% include 'header.html' %}
+{% include 'nav.html' %}
+
+<div class="container">
+
+    <h1 class="white-font">Ho单列表</h1>
+    <div class="table-responsive"  style="background-color: #FFF" >
+    <table class="table table-hover" style="background-color: #FFF">
+        <thead>
+            <tr>
+                <th>快递</th><th>姓名</th><th>电话</th>
+                {% if session.admin %}
+                <th>修改Ho单</th>
+                {% else %}
+                <th>Ho单状态</th>
+                {% endif %}
+                <th>创建时间</th><th>处理时间</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            {% set order_status_mapping = { 0: "已收录", 1: "取件中", 2: "取件成功", 3: "已完成", 4: "过期", 5: "未能找到该快递"}  %}
+            {% set order_class_mapping = { 0: "warning", 1: "warning", 5: "danger" }  %}
+            {% set order_active_button_mapping = { 5: "btn-danger" }  %}
+            <tr class="{{ order_class_mapping.get(order.status, '') }}">
+                <td>{{ order.company }}</td>
+                <td>{{ order.name }}</td>
+                <td>{{ order.phone }}</td>
+
+                <td><form method="post" action="/order/update">
+                    <input name="order_id" type="hidden" value="{{ order.id }}"/>
+                    <input name="status" id="order_status_{{ order.id }}" type="hidden" value="0" />
+                {% if session.admin %}
+                    {% for ix, v in order_status_mapping.items()|sort %}
+                        {% if ix == order.status %}
+                        <input onclick="document.getElementById('order_status_{{ order.id }}').value='{{ ix }}';"
+                               value="{{ v }}" type="submit" disabled
+                               class="btn {{ order_active_button_mapping.get(order.status, 'btn-primary') }}">
+                        {% else %}
+                        <input onclick="document.getElementById('order_status_{{ order.id }}').value='{{ ix }}';"
+                               value="{{ v }}" type="submit" class="btn btn-default">
+                        {% endif%}
+                    {% endfor %}
+                {% else %}
+                    <button disabled class="btn {{ order_active_button_mapping.get(order.status, 'btn-default') }}">{{ order_status_mapping[order.status] }}</button>
+                    {% if order.status == 2 %}
+                        <input onclick="document.getElementById('order_status_{{ order.id }}').value='3';"
+                               value="确认收货"
+                               type="submit" class="btn btn-default btn-warning">
+                    {% endif %}
+                {% endif %}
+                </form></td>
+
+                <td>{{ order.created_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ order.modified_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+{% include 'footer.html' %}
