@@ -10,7 +10,7 @@
 
     "SERVER_LOGIN_URL": "http://127.0.0.1:8080/login",
 
-    "SERVER_MANAGEMENT_MAGIC_WORD": "destructs.plough.mangier",
+    "SERVER_MANAGEMENT_MAGIC_WORD": "adminuser",
 
     "DB_FILE": "sqlite:////data/db/hodao.db",
 

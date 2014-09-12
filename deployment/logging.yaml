@@ -44,5 +44,5 @@ loggers:
     qualname: hodao
 
 root:
-  level: WARN
+  level: INFO
   handlers: [console]

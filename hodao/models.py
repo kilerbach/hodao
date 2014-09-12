@@ -107,7 +107,7 @@ def update_order(order_id, status, user=None):
         1 - success
     """
     # TODO:
-    if not (0 <= status <= 5):
+    if not (0 <= int(status) <= 5):
         return -1
 
     now = datetime.datetime.now()
