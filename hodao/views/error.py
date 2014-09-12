@@ -39,11 +39,11 @@ def csrf_protect():
         return
 
     if request.method == "POST":
-        session_token = session.pop('_csrf_token', None)
+        session_token = session.get('_csrf_token')
         form_token = request.form.get('_csrf_token')
 
         if not session_token or session_token != form_token:
-            render_template('error.html', msg=u'跨域错误')
+            return render_template('error.html', msg=u'跨域错误')
 
 
 def generate_csrf_token():
