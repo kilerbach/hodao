@@ -104,10 +104,11 @@ def create_order():
     phone = request.form['phone']
     company = request.form['company']
     name = request.form['name']
+    amount = int(request.form.get('amount', 1))
 
     user = flask.session.get('user')
     if user:
-        models.create_order(user, name, company, phone)
+        models.create_order(user, name, company, phone, amount)
     else:
         return render_template('error.html', msg=u"请先登录")
 

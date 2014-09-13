@@ -68,7 +68,7 @@ def _log_costtime(func):
 
 
 @_log_costtime
-def create_order(user, name, company, phone):
+def create_order(user, name, company, phone, amount):
     # A DBSession() instance establishes all conversations with the database
     # and represents a "staging zone" for all the objects loaded into the
     # database session object. Any change made against the objects in the
@@ -77,9 +77,10 @@ def create_order(user, name, company, phone):
     # revert all of them back to the last commit by calling
     # session.rollback()
     session = DBSession()
-    new_order = Order(user=user, name=name, company=company, phone=phone, status=0,
-                      created_time=datetime.datetime.now(), modified_time=datetime.datetime.now())
-    session.add(new_order)
+    for i in xrange(amount):
+        new_order = Order(user=user, name=name, company=company, phone=phone, status=0,
+                          created_time=datetime.datetime.now(), modified_time=datetime.datetime.now())
+        session.add(new_order)
     session.commit()
 
 

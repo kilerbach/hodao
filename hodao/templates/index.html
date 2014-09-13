@@ -40,10 +40,24 @@
               <div class="form-group">
                   <label class="col-sm-4 control-label" for="inputPhone">手机</label>
                   <div class="col-sm-4">
-                      <input name="phone" type="text" class="form-control" id="inputPhone" placeholder="请输入手机">
+                      <input name="phone" type="tel" class="form-control" id="inputPhone" placeholder="请输入手机">
                   </div>
               </div>
+
               <div class="form-group">
+                  <label class="col-sm-4 control-label" for="inputAmount">数量</label>
+
+                  <div class="col-sm-1">
+                      <input style="text-align:center;" name="amount" type="tel" class="form-control" id="inputAmount" value="1">
+                  </div>
+                  <div class="col-sm-2">
+                      <button type="button" class="btn btn-default" onclick="incrAmount(-1);">-</button>
+                      <span style="margin-left: 10px;"></span>
+                      <button type="button" class="btn btn-default" onclick="incrAmount(1);">+</button>
+                  </div>
+              </div>
+
+              <div class="form-group  form-group-lg">
                   <div class="col-sm-offset-4 col-sm-8">
                     <div class="checkbox">
                         <label class="yellow-font" >
@@ -74,11 +88,31 @@
     </div>
 
     <script>
+        function incrAmount(delta) {
+            var amount = document.getElementById("inputAmount");
+            var value = parseInt(amount.value);
+
+            if (!value) {
+                value = 1;
+            } else {
+                value = value + delta;
+            }
+
+            if (value < 1) {
+                value=1;
+            }
+            if (value > 10) {
+                value=10;
+            }
+
+            amount.value=value;
+        }
         function validateCreateOrderForm(){
             var company = document.getElementById("inputCompany").selectedIndex;
             var phone = document.getElementById("inputPhone").value;
             var name = document.getElementById("inputName").value;
             var agreement = document.getElementById("inputAgreement").checked;
+            var amount = parseInt(document.getElementById("inputAmount").value);
 
             var ok = true;
             if (company == "0") {
@@ -93,6 +127,11 @@
 
             if (phone == "") {
                 document.getElementById("inputPhone").parentNode.parentNode.className += " has-error";
+                ok = false;
+            }
+
+            if (!amount) {
+                document.getElementById("inputAmount").parentNode.parentNode.className += " has-error";
                 ok = false;
             }
 
