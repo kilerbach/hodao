@@ -61,7 +61,6 @@ def _log_costtime(func):
             return func(*a, **kw)
         finally:
             ct = time.time() - st
-
             spy_logger.info("%s - %dms", name, int(ct))
 
     return wrapper

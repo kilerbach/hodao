@@ -27,17 +27,17 @@ handlers:
     filename: /data/logs/hodao/costtime.log
 
 loggers:
-  request_logger:
+  hodao.request:
     level: INFO
     handlers: [request]
     propagate: no
     qualname: hodao.request
-  spy_logger:
+  hodao.spy:
     level: INFO
     handlers: [spy]
     propagate: no
     qualname: hodao.spy
-  info_logger:
+  hodao:
     level: INFO
     handlers: [console]
     propagate: no

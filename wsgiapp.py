@@ -12,15 +12,13 @@ import os
 
 import yaml
 
-from hodao.core import application, C
-
-
 # load logging configs
 DEPLOYMENT_DIR = os.path.join(os.path.dirname(__file__), 'deployment')
 logging_config_path = os.path.join(DEPLOYMENT_DIR, 'logging.yaml')
 with open(logging_config_path, 'r') as f:
     logging.config.dictConfig(yaml.load(f))
 
+from hodao.core import application, C
 
 # load application configs, MUST be run before import views and models!
 C.load_config(os.path.join(DEPLOYMENT_DIR, 'config.json'))

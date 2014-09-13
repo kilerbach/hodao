@@ -50,11 +50,6 @@ REMOTE_RUN_SCRIPT_PATH = os.path.join(REMOTE_PROJECT_PATH, REMOTE_RUN_SCRIPT_NAM
 
 
 # some useful functions
-def init_env():
-    if not files.exists(REMOTE_PROJECT_PATH, use_sudo=True):
-        sudo('mkdir %s' % REMOTE_PROJECT_PATH)
-
-
 def runuwsgi(cmd, warn_only=False):
     with cd(REMOTE_PROJECT_PATH):
         sudo("./%s %s" % (REMOTE_RUN_SCRIPT_NAME, cmd), warn_only=warn_only)
@@ -79,6 +74,7 @@ def pack():
     local("tar -czvf %s *" % (TAR_NAME, ))
 
 
+@task
 def init():
     file_location = [
         ('deployment/hodao.logrotate.conf', '/etc/logrotate.d/hodao.logrotate.conf'),
@@ -100,7 +96,6 @@ def uwsgi(cmd, warn_only=0):
 @task
 def deploy(start=1):
     # 1. initialize environment
-    init_env()
 
     local("rm -f %s" % (TAR_NAME,))
     local("tar -czvf %s *" % (TAR_NAME, ))
