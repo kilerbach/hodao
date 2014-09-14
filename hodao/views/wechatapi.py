@@ -34,6 +34,19 @@ def express_service():
     return text_reply(from_user, to_user, content)
 
 
+@wechatapp.text(C.SERVER_MANAGEMENT_MAGIC_WORD)
+def express_service():
+    from_user = flask.g.wechat['ToUserName']
+    to_user = flask.g.wechat['FromUserName']
+
+    content = (
+        """管理员好！\n"""
+        """【<a href="%s">猛戳蓝字</a>】\n"""
+        """管理订单。"""
+    ) % (util.make_auth_url(to_user, redirect='/login/'+C.SERVER_MANAGEMENT_MAGIC_WORD),)
+    return text_reply(from_user, to_user, content)
+
+
 @wechatapp.message(MSG_TEXT)
 @wechatapp.event(EVENT_SUBSCRIBE)
 def help_msg():
