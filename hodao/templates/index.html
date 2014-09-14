@@ -18,7 +18,7 @@
           <form class="form-horizontal" method="post" action="/order/create" role="form"  onsubmit='return validateCreateOrderForm()'>
               <input name="_csrf_token" type=hidden value="{{ csrf_token() }}">
               <div class="form-group">
-                  <label class="col-sm-4 control-label" for="inputCompany">快递公司</label>
+                  <label class="col-sm-4 control-label white-font" for="inputCompany">快递公司</label>
                   <div class="col-sm-4">
                       <select  name="company" class="form-control" id="inputCompany" >
                         <option value="" disabled selected>请选择快递</option>
@@ -31,26 +31,26 @@
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-4 control-label" for="inputName">姓名</label>
+                  <label class="col-sm-4 control-label white-font" for="inputName">姓名</label>
                   <div class="col-sm-4">
                       <input name="name" type="text" class="form-control" id="inputName" placeholder="请输入姓名">
                   </div>
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-4 control-label" for="inputPhone">手机</label>
+                  <label class="col-sm-4 control-label white-font" for="inputPhone">手机</label>
                   <div class="col-sm-4">
                       <input name="phone" type="tel" class="form-control" id="inputPhone" placeholder="请输入手机">
                   </div>
               </div>
 
               <div class="form-group">
-                  <label class="col-sm-4 control-label" for="inputAmount">数量</label>
+                  <label class="col-sm-4 col-xs-12 control-label white-font" for="inputAmount">数量</label>
 
-                  <div class="col-sm-1">
+                  <div class="col-sm-1  col-xs-3">
                       <input style="text-align:center;" name="amount" type="tel" class="form-control" id="inputAmount" value="1">
                   </div>
-                  <div class="col-sm-2">
+                  <div class="col-sm-2  col-xs-6">
                       <button type="button" class="btn btn-default" onclick="incrAmount(-1);">-</button>
                       <span style="margin-left: 10px;"></span>
                       <button type="button" class="btn btn-default" onclick="incrAmount(1);">+</button>
