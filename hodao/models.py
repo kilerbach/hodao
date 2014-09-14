@@ -34,11 +34,33 @@ class Order(Base):
     modified_time = Column(DateTime(), nullable=False)
 
 
-class Status(object):
-    pass
-
-
 Index('_idx_order_user', Order.user)
+
+
+class Status(object):
+    _START = -1
+    COLLECTED = 0
+    TAKING = 1
+    TAKEN = 2
+    FINISH = 3
+    EXPIRED = 4
+    NOT_FOUND = 5
+    _END = 6
+
+
+ORDER_STATUS_MAPPING = {
+    Status.COLLECTED: u"已收录",
+    Status.TAKING: u"取件中",
+    Status.TAKEN: u"取件成功",
+    Status.FINISH: u"已完成",
+    Status.EXPIRED: u"过期",
+    Status.NOT_FOUND: u"为找到"
+}
+
+USER_ORDER_STATUS_MAPPING = ORDER_STATUS_MAPPING.copy().update({
+    Status.NOT_FOUND: u"未能找到该快递"
+})
+
 
 # Create an engine that stores data in the local directory's
 # sqlalchemy_example.db file.
@@ -86,13 +108,18 @@ def create_order(user, name, company, phone, amount):
 @_log_costtime
 def query_orders(user):
     session = DBSession()
-    return session.query(Order).filter(Order.user == user).order_by(Order.status, Order.created_time).all()
+    return session.query(Order) \
+        .filter(Order.user == user) \
+        .order_by(Order.status, Order.created_time).all()
 
 
 @_log_costtime
 def query_all_orders():
+    two_days_ago = datetime.date.today() - datetime.timedelta(days=4)
     session = DBSession()
-    return session.query(Order).order_by(Order.status, Order.created_time).all()
+    return session.query(Order) \
+        .filter(Order.created_time > two_days_ago) \
+        .order_by(Order.status, Order.created_time).all()
 
 
 @_log_costtime
@@ -107,7 +134,7 @@ def update_order(order_id, status, user=None):
         1 - success
     """
     # TODO:
-    if not (0 <= int(status) <= 5):
+    if not (Status._START < int(status) <= Status._END):
         return -1
 
     now = datetime.datetime.now()

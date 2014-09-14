@@ -74,8 +74,13 @@ def manage_orders():
         else:
             company_split.append(0)
 
-    return render_template('management.html',
-                           sorted_orders=orders, date_split=date_split, company_split=company_split)
+    return render_template(
+        'management.html',
+        sorted_orders=orders,
+        date_split=date_split,
+        company_split=company_split,
+        order_status_mapping=models.ORDER_STATUS_MAPPING,
+    )
 
 
 @application.route('/order/update', methods=['POST'])

@@ -23,10 +23,22 @@
         </thead>
         <tbody>
 
-        {% set order_status_mapping = { 0: "已收录", 1: "取件中", 2: "取件成功", 3: "已完成", 4: "过期", 5: "未能找到该快递"}  %}
-        {% set order_class_mapping = { 0: "warning", 1: "warning" }  %}
+        {% set order_class_mapping = {
+                    0: "btn-success",
+                    1: "btn-primary",
+                    2: "btn-primary",
+                    3: "btn-primary",
+                    4: "btn-primary",
+                    5: "btn-primary",
+                }
+        %}
+
         {% for order in sorted_orders %}
-            <tr>
+            <tr
+            {% if order.status in [3, 4] %}
+                    class="hd-finished-order"
+            {% endif %}
+            >
                 {% if date_split[loop.index0]  %}
                     <td rowspan="{{ date_split[loop.index0] }}">{{ order.created_time.strftime('%Y-%m-%d') }}</td>
                 {% endif %}
@@ -42,9 +54,9 @@
                         <button id="order_{{ order.id }}_{{ ix }}"
                                 onclick="submitUpdateOrder('{{ order.id }}', {{ ix }});"
                         {% if ix == order.status %}
-                                disabled class="btn btn-primary"
+                                disabled class="btn btn-xs {{ order_class_mapping[order.status] }}"
                         {% else %}
-                                class="btn btn-default"
+                                class="btn btn-xs btn-default"
                         {% endif%}
                         >
                             {{ v }}
@@ -66,7 +78,6 @@
 
     <script src="//lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
     <script>
-
         function submitUpdateOrder(order_id, status){
           $.post("/ajax/order/update",
                  {order_id: order_id, status: status, _csrf_token: "{{ csrf_token() }}"},
@@ -77,16 +88,19 @@
                     return;
                 }
 
+                var status_class_mapping = {{ order_class_mapping|safe }};
+
                 var this_button_id = '#order_' + order_id + '_' + status;
                 var this_button = $(this_button_id);
-                this_button.removeClass("btn-default").addClass("btn-primary");
+                this_button.removeClass("btn-default").addClass(status_class_mapping[status]);
                 this_button.attr("disabled", true);
 
                 var sbs = this_button.siblings();
                 for (var i=0; i<sbs.length; i++) {
                     if (sbs[i].disabled) {
                         sbs[i].disabled = false;
-                        $(sbs[i]).removeClass("btn-primary").addClass("btn-default");
+                       // alert(i + "#" + status_class_mapping[i]);
+                        $(sbs[i]).removeClass("btn-success btn-primary").addClass("btn-default");
                     }
                 }
 
