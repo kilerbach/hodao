@@ -57,7 +57,6 @@ def manage_orders():
 
     orders = models.query_all_orders()
     date_express_orders = defaultdict(lambda: defaultdict(list))
-    date_count = defaultdict(int)
 
     def _get_date(dt):
         return dt.strftime("%Y-%m-%d")
@@ -65,34 +64,15 @@ def manage_orders():
     for o in orders:
         date = _get_date(o.created_time)
         date_express_orders[date][o.company].append(o)
-        date_count[date] += 1
 
-    orders = sorted(orders, key=lambda x: (_get_date(x.created_time), x.company), reverse=True)
-    pre_date = None
-    pre_company = None
-    date_split = []
-    company_split = []
-    for ix, o in enumerate(orders):
-        date = _get_date(o.created_time)
-        date_changed = False
-        if pre_date != date:
-            date_split.append(date_count[date])
-            pre_date = date
-            date_changed = True
-        else:
-            date_split.append(0)
-
-        if pre_company != o.company or date_changed:
-            company_split.append(len(date_express_orders[date][o.company]))
-            pre_company = o.company
-        else:
-            company_split.append(0)
+    result = []
+    for d, ex_ords in date_express_orders.iteritems():
+        for ex, ods in sorted(ex_ords.items()):
+            result.append([(d, ex), sorted(ods, key=lambda x: x.created_time)])
 
     return render_template(
         'management.html',
-        sorted_orders=orders,
-        date_split=date_split,
-        company_split=company_split,
+        sorted_orders=result,
         order_status_mapping=models.ORDER_STATUS_MAPPING,
     )
 
