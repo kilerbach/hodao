@@ -95,12 +95,14 @@
                 this_button.removeClass("btn-default").addClass(status_class_mapping[status]);
                 this_button.attr("disabled", true);
 
+                var all_btn_classes = "btn-success btn-primary btn-warning btn-danger";
+
                 var sbs = this_button.siblings();
                 for (var i=0; i<sbs.length; i++) {
                     if (sbs[i].disabled) {
                         sbs[i].disabled = false;
                        // alert(i + "#" + status_class_mapping[i]);
-                        $(sbs[i]).removeClass("btn-success btn-primary").addClass("btn-default");
+                        $(sbs[i]).removeClass(all_btn_classes).addClass("btn-default");
                     }
                 }
 

@@ -53,7 +53,7 @@ ORDER_STATUS_MAPPING = {
     Status.TAKING: u"取件中",
     Status.TAKEN: u"取件成功",
     Status.FINISH: u"已完成",
-    Status.EXPIRED: u"过期",
+    # Status.EXPIRED: u"过期",
     Status.NOT_FOUND: u"未找到"
 }
 

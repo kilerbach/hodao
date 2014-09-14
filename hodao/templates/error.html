@@ -7,9 +7,14 @@
 
     <div class="container">
 
-        <h1>出错啦</h1>
+        <h1 class="white-font">出错啦</h1>
 
-        <p>{{ msg }}</p>
+        {% if msg %}
+        <p class="white-font">{{ msg }}</p>
+        {% endif %}
+        {% if raw %}
+        {{ raw|safe }}
+        {% endif %}
 
     </div>
 

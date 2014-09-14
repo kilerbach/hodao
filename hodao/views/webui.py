@@ -13,6 +13,20 @@ from hodao.core import application, C
 from hodao import models, util
 
 
+def _render_login_page():
+    return render_template(
+        'error.html',
+        msg=u'请先登录~',
+        raw=u"""<p class="white-font">如何登陆？</p>
+        <p class="white-font">请使用微信搜索公众号：
+            <a class="rich_media_meta link nickname" href="weixin://addfriend/gh_073d2ed7bb43"
+               id="post-user">Ho道</a>
+        </p>
+        <p class="white-font">关注成功后回复<b>A</b>就可以跳转至此页面。</p>
+        """
+    )
+
+
 @application.route('/static/<name>')
 def serve_static(name):
     return application.send_static_file(name)
@@ -91,7 +105,7 @@ def update_order():
     # check permission
     user = flask.session.get('user')
     if not (user or flask.session.get('admin')):
-        return render_template('error.html', msg=u"请先登录")
+        return _render_login_page()
 
     models.update_order(order_id, int(status), user or None)
     redirect_url = request.form.get('next')
@@ -115,7 +129,7 @@ def create_order():
     if user:
         models.create_order(user, name, company, phone, amount)
     else:
-        return render_template('error.html', msg=u"请先登录")
+        return _render_login_page()
 
     return flask.redirect('/order')
 
@@ -128,7 +142,7 @@ def login():
     redirect_url = request.values.get('next')
 
     if not (u and t and s) or not util.valid_request(s, u, t):
-        return render_template('error.html', msg=u"请先登录")
+        return _render_login_page()
 
     flask.session['user'] = u
     flask.session['admin'] = 0
