@@ -35,9 +35,9 @@ Deploy
 ----
 
     # init env, run once at first time.
-    fab -f deployment/fabfile.py production init
+    fab production init
     
-    fab -f deployment/fabfile.py production deploy
+    fab production deploy
 
 Run
 ----
