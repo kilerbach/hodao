@@ -9,7 +9,7 @@ import datetime
 import functools
 
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, BIGINT, BOOLEAN
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Index
@@ -35,17 +35,33 @@ class Order(Base):
 
 
 Index('_idx_order_user', Order.user)
+Index('_idx_order_ctime', Order.created_time)
+
+
+class Contact(Base):
+    __tablename__ = 'contact'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user = Column(String(250), nullable=False)
+    name = Column(String(250), nullable=False)
+    phone = Column(BIGINT(), nullable=False)
+    order = Column(Integer(), nullable=False)
+    created_time = Column(DateTime(), nullable=False)
+    modified_time = Column(DateTime(), nullable=False)
+    is_deleted = Column(BOOLEAN(), nullable=False)
+
+
+Index('_idx_contact_user', Contact.user)
 
 
 class Status(object):
-    _START = -1
+    START_ = -1
     COLLECTED = 0
     TAKING = 1
     TAKEN = 2
     FINISH = 3
     EXPIRED = 4
     NOT_FOUND = 5
-    _END = 6
+    END_ = 6
 
 
 ORDER_STATUS_MAPPING = {
@@ -134,7 +150,7 @@ def update_order(order_id, status, user=None):
         1 - success
     """
     # TODO:
-    if not (Status._START < int(status) <= Status._END):
+    if not (Status.START_ < int(status) <= Status.END_):
         return -1
 
     now = datetime.datetime.now()
@@ -153,4 +169,32 @@ def update_order(order_id, status, user=None):
     return rows
 
 
+@_log_costtime
+def create_contact(user, name, phone):
+    now = datetime.datetime.now()
+    contact = Contact(user=user, name=name, phone=phone,
+                      order=0, created_time=now, modified_time=now,
+                      is_deleted=False)
+    session = DBSession()
+    session.add(contact)
+    session.commit()
+    return
 
+
+@_log_costtime
+def query_contacts(user):
+    session = DBSession()
+    return session.query(Contact)\
+        .filter(Contact.user == user)\
+        .filter(Contact.is_deleted is not False)\
+        .all()
+
+
+@_log_costtime
+def delete_contact(user, contact_id):
+    session = DBSession()
+    rows = session.query(Contact)\
+        .filter(Contact.user == user)\
+        .filter(Contact.id == contact_id).delete()
+    session.commit()
+    return rows

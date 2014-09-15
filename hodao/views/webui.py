@@ -37,6 +37,16 @@ def index():
     return render_template('index.html')
 
 
+@application.route('/contact')
+def query_contact():
+    user = flask.session.get('user')
+    if not user:
+        return _render_login_page()
+
+    contacts = models.query_contacts(user)
+    return render_template('contact.html', contacts=contacts)
+
+
 @application.route('/order')
 def show_orders():
     user = flask.session.get('user')
