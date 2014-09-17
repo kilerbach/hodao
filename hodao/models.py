@@ -7,6 +7,7 @@ Created on 2014-9-2
 import time
 import datetime
 import functools
+from contextlib import contextmanager
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String, DateTime, BIGINT, BOOLEAN
@@ -89,6 +90,19 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
 
+@contextmanager
+def create_session():
+    session = DBSession()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
 def _log_costtime(func):
     name = __name__ + '.' + func.__name__
 
@@ -113,12 +127,11 @@ def create_order(user, name, company, phone, amount):
     # session.commit(). If you're not happy about the changes, you can
     # revert all of them back to the last commit by calling
     # session.rollback()
-    session = DBSession()
-    for i in xrange(amount):
-        new_order = Order(user=user, name=name, company=company, phone=phone, status=0,
-                          created_time=datetime.datetime.now(), modified_time=datetime.datetime.now())
-        session.add(new_order)
-    session.commit()
+    with create_session() as session:
+        for i in xrange(amount):
+            new_order = Order(user=user, name=name, company=company, phone=phone, status=0,
+                              created_time=datetime.datetime.now(), modified_time=datetime.datetime.now())
+            session.add(new_order)
 
 
 @_log_costtime
@@ -155,18 +168,17 @@ def update_order(order_id, status, user=None):
 
     now = datetime.datetime.now()
     update_params = {'status': status, 'modified_time': now}
-    session = DBSession()
-    if user:
-        rows = session.query(Order) \
-            .filter(Order.id == order_id) \
-            .filter(Order.user == user) \
-            .update(update_params)
-    else:
-        rows = session.query(Order) \
-            .filter(Order.id == order_id) \
-            .update(update_params)
-    session.commit()
-    return rows
+    with create_session() as session:
+        if user:
+            rows = session.query(Order) \
+                .filter(Order.id == order_id) \
+                .filter(Order.user == user) \
+                .update(update_params)
+        else:
+            rows = session.query(Order) \
+                .filter(Order.id == order_id) \
+                .update(update_params)
+        return rows
 
 
 @_log_costtime
@@ -175,9 +187,9 @@ def create_contact(user, name, phone):
     contact = Contact(user=user, name=name, phone=phone,
                       order=0, created_time=now, modified_time=now,
                       is_deleted=False)
-    session = DBSession()
-    session.add(contact)
-    session.commit()
+    with create_session() as session:
+        session.add(contact)
+
     return
 
 
@@ -192,9 +204,8 @@ def query_contacts(user):
 
 @_log_costtime
 def delete_contact(user, contact_id):
-    session = DBSession()
-    rows = session.query(Contact)\
-        .filter(Contact.user == user)\
-        .filter(Contact.id == contact_id).delete()
-    session.commit()
-    return rows
+    with create_session() as session:
+        rows = session.query(Contact)\
+            .filter(Contact.user == user)\
+            .filter(Contact.id == contact_id).delete()
+        return rows
