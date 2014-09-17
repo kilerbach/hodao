@@ -52,7 +52,7 @@
                     <button disabled class="btn {{ order_active_button_mapping.get(order.status, 'btn-default') }}">{{ order_status_mapping[order.status] }}</button>
                     {% if order.status == 2 %}
                         <input onclick="document.getElementById('order_status_{{ order.id }}').value='3';"
-                               value="确认收货"
+                               value="Ho到"
                                type="submit" class="btn btn-default btn-warning">
                     {% endif %}
                 {% endif %}

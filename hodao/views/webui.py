@@ -76,7 +76,7 @@ def manage_orders():
         date_express_orders[date][o.company].append(o)
 
     result = []
-    for d, ex_ords in date_express_orders.iteritems():
+    for d, ex_ords in sorted(date_express_orders.items(), reverse=True):
         for ex, ods in sorted(ex_ords.items()):
             result.append([(d, ex), sorted(ods, key=lambda x: x.created_time)])
 
