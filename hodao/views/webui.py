@@ -78,7 +78,7 @@ def manage_orders():
     result = []
     for d, ex_ords in sorted(date_express_orders.items(), reverse=True):
         for ex, ods in sorted(ex_ords.items()):
-            result.append([(d, ex), sorted(ods, key=lambda x: x.created_time)])
+            result.append([(d, ex), sorted(ods, key=lambda x: x.created_time, reverse=True)])
 
     return render_template(
         'management.html',
