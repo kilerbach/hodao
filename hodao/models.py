@@ -39,6 +39,19 @@ Index('_idx_order_user', Order.user)
 Index('_idx_order_ctime', Order.created_time)
 
 
+class OrderTrack(Base):
+    __tablename__ = 'orderTrack'
+
+    id = Column(Integer, primary_key=True)
+    orderid = Column(Integer, nullable=False)
+    operator = Column(String(250), nullable=False)
+    note = Column(String(250), nullable=False)
+    operated_time = Column(DateTime(), nullable=False)
+
+
+Index('_idx_ordertrace_orderid', OrderTrack.orderid)
+
+
 class Contact(Base):
     __tablename__ = 'contact'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -65,18 +78,38 @@ class Status(object):
     END_ = 6
 
 
+class UserRole(object):
+    NOT_LOGIN = 0
+    USER = 1
+    ADMIN = 2
+
+
 ORDER_STATUS_MAPPING = {
     Status.COLLECTED: u"已收录",
     Status.TAKING: u"取件中",
     Status.TAKEN: u"取件成功",
     Status.FINISH: u"已完成",
-    # Status.EXPIRED: u"过期",
+    Status.EXPIRED: u"已取消",
     Status.NOT_FOUND: u"未找到"
 }
 
 USER_ORDER_STATUS_MAPPING = ORDER_STATUS_MAPPING.copy().update({
     Status.NOT_FOUND: u"未能找到该快递"
 })
+
+ROLE_ALLOW_OPERATIONS = {
+    # can change FROM status TO status.
+    UserRole.USER: {
+        Status.TAKEN: Status.FINISH,
+        Status.COLLECTED: Status.EXPIRED,
+    },
+
+    UserRole.ADMIN: {
+        Status.COLLECTED: None,
+        Status.TAKING: None,
+        Status.TAKEN: None,
+    }
+}
 
 
 # Create an engine that stores data in the local directory's
