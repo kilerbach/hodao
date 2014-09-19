@@ -87,24 +87,6 @@ def manage_orders():
     )
 
 
-@application.route('/order/update', methods=['POST'])
-def update_order():
-    order_id = request.form['order_id']
-    status = request.form['status']
-
-    # check permission
-    user = flask.session.get('user')
-    if not (user or flask.session.get('admin')):
-        return _render_login_page()
-
-    models.update_order(order_id, int(status), user or None)
-    redirect_url = request.form.get('next')
-    if redirect_url:
-        return flask.redirect(redirect_url)
-
-    return flask.redirect('/order')
-
-
 @application.route('/order/create', methods=['GET', 'POST'])
 def create_order():
     if request.method == 'GET':
