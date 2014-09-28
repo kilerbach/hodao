@@ -34,7 +34,9 @@ def serve_static(name):
 
 @application.route('/')
 def index():
-    return render_template('index.html')
+    user = flask.session.get('user')
+    contacts = models.query_contacts(user)
+    return render_template('index.html', contacts=contacts)
 
 
 @application.route('/contact')
@@ -44,7 +46,7 @@ def query_contact():
         return _render_login_page()
 
     contacts = models.query_contacts(user)
-    return render_template('contact.html', contacts=contacts)
+    return render_template('contacts.html', contacts=contacts)
 
 
 @application.route('/order')
@@ -96,12 +98,16 @@ def create_order():
     company = request.form['company']
     name = request.form['name']
     amount = int(request.form.get('amount', 1))
+    save_contact = request.form.get('savecontact', 'off') == 'on'
 
     user = flask.session.get('user')
     if user:
         models.create_order(user, name, company, phone, amount)
     else:
         return _render_login_page()
+
+    if save_contact:
+        models.create_contact(user, name, phone)
 
     return flask.redirect('/order')
 

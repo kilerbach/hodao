@@ -63,6 +63,9 @@ class Contact(Base):
     modified_time = Column(DateTime(), nullable=False)
     is_deleted = Column(BOOLEAN(), nullable=False)
 
+    def is_primary(self):
+        return int(self.order) == ContactOrder.PRIMARY
+
 
 Index('_idx_contact_user', Contact.user)
 
@@ -76,6 +79,11 @@ class Status(object):
     EXPIRED = 4
     NOT_FOUND = 5
     END_ = 6
+
+
+class ContactOrder(object):
+    PRIMARY = 0
+    OTHERS = 1
 
 
 class UserRole(object):
@@ -217,13 +225,29 @@ def update_order(order_id, status, user=None):
 @_log_costtime
 def create_contact(user, name, phone):
     now = datetime.datetime.now()
-    contact = Contact(user=user, name=name, phone=phone,
-                      order=0, created_time=now, modified_time=now,
-                      is_deleted=False)
+
     with create_session() as session:
+        rows = session.query(Contact).filter(Contact.user == user).with_lockmode('update').all()
+
+        has_primary = False
+        for c in rows:
+            if c.is_primary():
+                has_primary = True
+
+            if c.name == name and str(c.phone) == str(phone):
+                return 0
+
+        contact = Contact(user=user, name=name, phone=phone,
+                          order=ContactOrder.OTHERS,
+                          created_time=now, modified_time=now,
+                          is_deleted=False)
+        # if no primary, set it to primary
+        if not has_primary:
+            contact.order = ContactOrder.PRIMARY
+
         session.add(contact)
 
-    return
+    return 1
 
 
 @_log_costtime
@@ -231,7 +255,7 @@ def query_contacts(user):
     session = DBSession()
     return session.query(Contact)\
         .filter(Contact.user == user)\
-        .filter(Contact.is_deleted is not False)\
+        .filter(Contact.is_deleted == False)\
         .all()
 
 

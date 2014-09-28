@@ -15,6 +15,9 @@ def main():
     # statements in raw SQL.
     Base.metadata.create_all(engine)
 
+    # for i in engine.execute('SELECT * FROM "contact"'):
+    #     print i
+
 
 if __name__ == '__main__':
     main()

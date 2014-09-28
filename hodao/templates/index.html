@@ -17,9 +17,9 @@
 
           <form class="form-horizontal" method="post" action="/order/create" role="form"  onsubmit='return validateCreateOrderForm()'>
               <input name="_csrf_token" type=hidden value="{{ csrf_token() }}">
-              <div class="form-group">
-                  <label class="col-sm-4 control-label white-font" for="inputCompany">快递公司</label>
-                  <div class="col-sm-4">
+              <div class="row form-group">
+                  <label class="col-xs-2 col-sm-4 control-label white-font" for="inputCompany">快递</label>
+                  <div class="col-xs-6 col-sm-4">
                       <select  name="company" class="form-control" id="inputCompany" >
                         <option value="" disabled selected>请选择快递</option>
                         <option>申通</option>
@@ -30,22 +30,35 @@
                   </div>
               </div>
 
-              <div class="form-group">
-                  <label class="col-sm-4 control-label white-font" for="inputName">姓名</label>
-                  <div class="col-sm-4">
-                      <input name="name" type="text" class="form-control" id="inputName" placeholder="请输入姓名">
+              <div class="row form-group">
+                  <label class="col-xs-2 col-sm-4 control-label white-font" for="inputName">姓名</label>
+                  <div class="col-xs-6 col-sm-4">
+                      <input list="hd-contacts" name="name" type="text" class="form-control" id="inputName" placeholder="请输入姓名">
                   </div>
+                    <datalist id="hd-contacts">
+                      {% for c in contacts %}
+                        <option value="{{ c.name }}">
+                      {% endfor %}
+                    </datalist>
               </div>
-
-              <div class="form-group">
-                  <label class="col-sm-4 control-label white-font" for="inputPhone">手机</label>
-                  <div class="col-sm-4">
+              <div class="row form-group">
+                  <label class="col-xs-2 col-sm-4 control-label white-font" for="inputPhone">手机</label>
+                  <div class="col-xs-6 col-sm-4">
                       <input name="phone" type="tel" class="form-control" id="inputPhone" placeholder="请输入手机">
                   </div>
+
+              <div class="col-xs-4 col-sm-4">
+                    <div class="checkbox">
+                        <label class="white-font" >
+                          <input name="savecontact" type="checkbox" style="width:20px;height:20px" id="inputSaveContact">
+                           设为常用
+                        </label>
+                    </div>
+                  </div>
               </div>
 
-              <div class="form-group">
-                  <label class="col-sm-4 col-xs-12 control-label white-font" for="inputAmount">数量</label>
+              <div class="row form-group">
+                  <label class="col-sm-4 col-xs-2 control-label white-font" for="inputAmount">数量</label>
 
                   <div class="col-sm-1  col-xs-3">
                       <input style="text-align:center;" name="amount" type="tel" class="form-control" id="inputAmount" value="1">
@@ -57,7 +70,7 @@
                   </div>
               </div>
 
-              <div class="form-group  form-group-lg">
+              <div class="row form-group">
                   <div class="col-sm-offset-4 col-sm-8">
                     <div class="checkbox">
                         <label class="yellow-font" >
@@ -71,13 +84,13 @@
                     </div>
                   </div>
               </div>
-              <div class="form-group">
+              <div class="row form-group">
                 <div class="col-sm-offset-4 col-sm-8">
                   <button type="submit" class="btn btn-default">去吧～Ho道</button>
 
                   <input type="button" style="margin-left: 20px"
                          class="btn btn-default" onclick="location.href='/order'"
-                         value="查看Ho单"/>
+                         value="追踪Ho单"/>
                 </div>
 
               </div>
@@ -87,7 +100,23 @@
       </div>
     </div>
 
+
     <script>
+
+        function hdFillNameAndPhone() {
+            var phone = document.getElementById("inputPhone");
+            var name = document.getElementById("inputName");
+              {% for c in contacts %}
+                  {% if c.is_primary() %}
+                    name.value = "{{ c.name }}";
+                    phone.value ="{{ c.phone }}";
+                  {% endif %}
+              {% endfor %}
+        };
+
+        hdFillNameAndPhone();
+
+
         function incrAmount(delta) {
             var amount = document.getElementById("inputAmount");
             var value = parseInt(amount.value);
