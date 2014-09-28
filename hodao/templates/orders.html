@@ -25,7 +25,7 @@
         </thead>
         <tbody>
         {% for order in orders %}
-            {% set order_status_mapping = { 0: "已收录", 1: "取件中", 2: "取件成功", 3: "已完成", 4: "过期", 5: "未能找到该快递"}  %}
+            {% set order_status_mapping = { 0: "已收录", 1: "取件中", 2: "取件成功", 3: "已完成", 4: "已取消", 5: "未能找到该快递"}  %}
             {% set order_class_mapping = { 0: "warning", 1: "warning", 5: "danger" }  %}
             {% set order_active_button_mapping = { 5: "btn-danger" }  %}
             <tr class="{{ order_class_mapping.get(order.status, '') }}">
@@ -54,6 +54,10 @@
                         <input onclick="document.getElementById('order_status_{{ order.id }}').value='3';"
                                value="Ho到"
                                type="submit" class="btn btn-default btn-warning">
+                    {% elif order.status == 0 %}
+                        <input onclick="document.getElementById('order_status_{{ order.id }}').value='4';"
+                               value="取消Ho单"
+                               type="submit" class="btn btn-default btn-danger">
                     {% endif %}
                 {% endif %}
                 </form></td>
