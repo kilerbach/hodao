@@ -92,7 +92,7 @@ def manage_orders():
 @application.route('/order/create', methods=['GET', 'POST'])
 def create_order():
     if request.method == 'GET':
-        return render_template('index.html')
+        return index()
 
     phone = request.form['phone']
     company = request.form['company']
