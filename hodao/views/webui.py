@@ -62,12 +62,13 @@ def show_orders():
     return render_template('orders.html', orders=orders)
 
 
-@application.route('/order/manage')
-def manage_orders():
+@application.route('/order/manage', defaults={'page': 1})
+@application.route('/order/manage/page/<int:page>')
+def manage_orders(page):
     if not flask.session.get('admin'):
         return render_template('error.html', msg=u"需要管理员权限")
 
-    orders = models.query_all_orders()
+    orders = models.query_all_orders(page)
     date_express_orders = defaultdict(lambda: defaultdict(list))
 
     def _get_date(dt):
@@ -82,10 +83,18 @@ def manage_orders():
         for ex, ods in sorted(ex_ords.items()):
             result.append([(d, ex), sorted(ods, key=lambda x: x.created_time, reverse=True)])
 
+    class Pagination(object):
+        def __init__(self, page):
+            pre = range(max(1, page-2), page)
+            self.pagination = pre + range(page, page+5-len(pre))
+            self.previous = max(1, page)
+            self.next = page+1
+
     return render_template(
         'management.html',
         sorted_orders=result,
         order_status_mapping=models.ORDER_STATUS_MAPPING,
+        pagination=Pagination(page),
     )
 
 

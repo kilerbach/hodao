@@ -66,7 +66,7 @@ def ajax_delete_contact():
 
 
 @application.route('/ajax/contact/primary', methods=["POST"])
-def ajax_delete_contact():
+def ajax_primary_contact():
     user = flask.session.get('user')
     if not user:
         return jsonify({"status": 1, "error": u"需要登录"})

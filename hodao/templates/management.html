@@ -76,6 +76,14 @@
     </table>
 
     </div>
+
+    <ul class="pagination">
+      <li><a href="/order/manage/page/{{ pagination.pre }}">&laquo;</a></li>
+      {% for p in pagination.pagination %}
+      <li><a href="/order/manage/page/{{ p }}">{{ p }}</a></li>
+      {% endfor %}
+      <li><a href="/order/manage/page/{{ pagination.next }}">&raquo;</a></li>
+    </ul>
 </div>
 
 
