@@ -184,25 +184,17 @@ def query_orders(user):
 
 
 @_log_costtime
-def query_all_orders(pagination=1):
+def query_all_orders(pagination=1, page_size=5):
     if pagination < 1:
         return []
 
-    step = 2
 
     session = DBSession()
-    if pagination == 1:
-        start = datetime.date.today() - datetime.timedelta(days=step)
-        return session.query(Order) \
-            .filter(Order.created_time > start) \
-            .order_by(Order.status, Order.created_time).all()
-    else:
-        start = datetime.date.today() - datetime.timedelta(days=step*pagination)
-        end = datetime.date.today() - datetime.timedelta(days=step*(pagination-1))
-        return session.query(Order) \
-            .filter(start < Order.created_time) \
-            .filter(Order.created_time <= end) \
-            .order_by(Order.status, Order.created_time).all()
+    total = session.query(Order).count()
+    query = session.query(Order).order_by(Order.created_time.desc())\
+        .offset((pagination-1)*page_size)\
+        .limit(page_size)
+    return total, query.all()
 
 
 @_log_costtime

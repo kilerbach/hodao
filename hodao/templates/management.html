@@ -10,6 +10,8 @@
 <div class="container">
 
     <h1 class="white-font">Ho单列表</h1>
+    <div>{{ pagination.links|safe }}</div>
+
 
     <button type="button" id="btnToggleOrders" class="btn btn-info">隐藏已完成订单</button>
 
@@ -74,16 +76,10 @@
         {% endfor %}
 
     </table>
-
     </div>
 
-    <ul class="pagination">
-      <li><a href="/order/manage/page/{{ pagination.pre }}">&laquo;</a></li>
-      {% for p in pagination.pagination %}
-      <li><a href="/order/manage/page/{{ p }}">{{ p }}</a></li>
-      {% endfor %}
-      <li><a href="/order/manage/page/{{ pagination.next }}">&raquo;</a></li>
-    </ul>
+    {{ pagination.links|safe }}
+
 </div>
 
 
