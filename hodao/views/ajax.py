@@ -63,3 +63,17 @@ def ajax_delete_contact():
         return jsonify({"status": 0, "error": u"成功"})
     else:
         return jsonify({"status": 1, "error": u"删除失败"})
+
+
+@application.route('/ajax/contact/primary', methods=["POST"])
+def ajax_delete_contact():
+    user = flask.session.get('user')
+    if not user:
+        return jsonify({"status": 1, "error": u"需要登录"})
+
+    contact_id = request.form['contact_id']
+    rows = models.set_contact_primary(user, contact_id)
+    if rows > 0:
+        return jsonify({"status": 0, "error": u"成功"})
+    else:
+        return jsonify({"status": 1, "error": u"更新失败"})

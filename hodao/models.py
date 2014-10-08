@@ -266,3 +266,28 @@ def delete_contact(user, contact_id):
             .filter(Contact.user == user)\
             .filter(Contact.id == contact_id).delete()
         return rows
+
+
+@_log_costtime
+def set_contact_primary(user, contact_id):
+    now = datetime.datetime.now()
+    with create_session() as session:
+        rows = session.query(Contact).filter(Contact.user == user).with_lockmode('update').all()
+        if not rows:
+            return 0
+
+        for c in rows:
+            if int(c.id) == int(contact_id) and c.order == ContactOrder.PRIMARY:
+                return 1
+
+        update_params = {'order': ContactOrder.OTHERS, 'modified_time': now}
+        session.query(Contact).\
+            filter(Contact.user == user and Contact.order == ContactOrder.PRIMARY).\
+            update(update_params)
+
+        update_params['order'] = ContactOrder.PRIMARY
+        session.query(Contact).\
+            filter(Contact.user == user and Contact.id == contact_id).\
+            update(update_params)
+
+    return 1
