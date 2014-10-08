@@ -41,6 +41,7 @@ LOCAL_CWD = os.getcwd()
 TAR_NAME = "%s.%s.tar" % (PROJECT_NAME, datetime.datetime.now().strftime("%Y%m%d"),)
 LOCAL_TAR_PATH = os.path.join(LOCAL_CWD, TAR_NAME)
 REMOTE_PROJECT_PATH = os.path.join('/data/apps/', PROJECT_NAME)
+REMOTE_TOUCH_RELOAD = '/data/apps/run/uwsgi_%s.reload' % PROJECT_NAME
 REMOTE_APP_CURRENT_PATH = os.path.join(REMOTE_PROJECT_PATH, 'current')
 REMOTE_APP_REAL_FOLDER = '%s.%s' % (PROJECT_NAME, datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
 REMOTE_APP_REAL_PATH = os.path.join(REMOTE_PROJECT_PATH, REMOTE_APP_REAL_FOLDER)
@@ -94,9 +95,11 @@ def uwsgi(cmd, warn_only=0):
 
 
 @task
-def deploy(start=1):
-    # 1. initialize environment
+def deploy():
 
+    first_deploy = False
+
+    # 1. initialize environment
     local("rm -f %s" % (TAR_NAME,))
     local("tar -czvf %s *" % (TAR_NAME, ))
 
@@ -111,9 +114,9 @@ def deploy(start=1):
         sudo('tar -xf %s' % TAR_NAME)
         sudo('rm -f %s' % TAR_NAME)
 
-    # 3. if old code exists, try to stop service and replace configs
+    # 3. if old code exists, try to replace configs
     if files.exists(REMOTE_APP_CURRENT_PATH, use_sudo=True):
-        runuwsgi('stop', warn_only=True)
+        # runuwsgi('stop', warn_only=True)
 
         # replace configs
         with cd(REMOTE_PROJECT_PATH):
@@ -123,6 +126,7 @@ def deploy(start=1):
 
         sudo('rm -f %s' % REMOTE_APP_CURRENT_PATH)
     else:
+        first_deploy = True
         debug("[INFO]Remote folder(%s) does not exist." % (REMOTE_APP_CURRENT_PATH,))
 
     # 4. if `runuwsgi.sh` does not exist, copy from source code.
@@ -136,9 +140,11 @@ def deploy(start=1):
     # 5. make `current` soft link.
     sudo('ln -s %s %s' % (REMOTE_APP_REAL_PATH, REMOTE_APP_CURRENT_PATH))
 
-    if int(start):
-        # 6. start service
+    # 6. start/reload service
+    if first_deploy:
         runuwsgi('start')
+    else:
+        sudo('touch %s' % REMOTE_TOUCH_RELOAD)
 
 
 
