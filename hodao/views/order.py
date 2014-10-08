@@ -13,33 +13,29 @@ from flask.ext.paginate import Pagination
 from hodao.core import application
 from hodao.models import order, contact
 from hodao.models.base import ORDER_STATUS_MAPPING
-from hodao.views.user import render_login_page
+from .util import check_login, check_super, check_login_or_super
 
 
 @application.route('/')
+@check_login
 def index():
-    user = flask.session.get('user')
+    user = flask.session['user']
     contacts = contact.query_contacts(user)
     return render_template('index.html', contacts=contacts)
 
 
-
-
 @application.route('/order')
+@check_login
 def show_orders():
-    user = flask.session.get('user')
-    if user:
-        orders = order.query_orders(user)
-    else:
-        orders = []
+    user = flask.session['user']
+    orders = order.query_orders(user)
     return render_template('orders.html', orders=orders)
 
 
 @application.route('/order/manage', defaults={'page': 1})
 @application.route('/order/manage/page/<int:page>')
+@check_super
 def manage_orders(page):
-    if not flask.session.get('admin'):
-        return render_template('error.html', msg=u"需要管理员权限")
 
     per_page = 20
     total, orders = order.query_all_orders(page, per_page)
@@ -68,6 +64,7 @@ def manage_orders(page):
 
 
 @application.route('/order/create', methods=['GET', 'POST'])
+@check_login
 def create_order():
     if request.method == 'GET':
         return index()
@@ -78,11 +75,8 @@ def create_order():
     amount = int(request.form.get('amount', 1))
     save_contact = request.form.get('savecontact', 'off') == 'on'
 
-    user = flask.session.get('user')
-    if user:
-        order.create_order(user, name, company, phone, amount)
-    else:
-        return render_login_page()
+    user = flask.session['user']
+    order.create_order(user, name, company, phone, amount)
 
     if save_contact:
         contact.create_contact(user, name, phone)
@@ -91,14 +85,13 @@ def create_order():
 
 
 @application.route('/order/update', methods=['POST'])
+@check_login_or_super
 def update_order():
     order_id = request.form['order_id']
     status = request.form['status']
 
     # check permission
     user = flask.session.get('user')
-    if not (user or flask.session.get('admin')):
-        return render_login_page()
 
     order.update_order(order_id, int(status), user or None)
     redirect_url = request.form.get('next')

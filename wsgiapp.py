@@ -28,6 +28,7 @@ application.debug = C.DEBUG
 
 # register views
 from hodao.views import *
+from hodao.apis import *
 
 
 def main():

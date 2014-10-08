@@ -8,7 +8,7 @@ import flask
 from flask import jsonify, request
 
 from hodao.core import application
-from hodao import models
+from hodao.models import order, contact
 
 
 @application.route('/ajax/order')
@@ -28,7 +28,7 @@ def ajax_update_order():
 
     order_id = request.form['order_id']
     status = request.form['status']
-    rows = models.update_order(order_id, status, user)
+    rows = order.update_order(order_id, status, user)
 
     if rows > 0:
         return jsonify({"status": 0, "error": u"成功"})
@@ -44,7 +44,7 @@ def ajax_create_contact():
 
     name = request.form['name']
     phone = request.form['phone']
-    rows = models.create_contact(user, name, phone)
+    rows = contact.create_contact(user, name, phone)
     if rows > 0:
         return jsonify({"status": 0, "error": u"成功"})
     else:
@@ -58,7 +58,7 @@ def ajax_delete_contact():
         return jsonify({"status": 1, "error": u"需要登录"})
 
     contact_id = request.form['contact_id']
-    rows = models.delete_contact(user, contact_id)
+    rows = contact.delete_contact(user, contact_id)
     if rows > 0:
         return jsonify({"status": 0, "error": u"成功"})
     else:
@@ -72,7 +72,7 @@ def ajax_primary_contact():
         return jsonify({"status": 1, "error": u"需要登录"})
 
     contact_id = request.form['contact_id']
-    rows = models.set_contact_primary(user, contact_id)
+    rows = contact.set_contact_primary(user, contact_id)
     if rows > 0:
         return jsonify({"status": 0, "error": u"成功"})
     else:

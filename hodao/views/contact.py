@@ -10,14 +10,13 @@ from flask.ext.paginate import Pagination
 
 from hodao.core import application
 from hodao.models import contact
-from hodao.views.user import render_login_page
+from .util import check_login
 
 
 @application.route('/contact')
+@check_login
 def query_contact():
-    user = flask.session.get('user')
-    if not user:
-        return render_login_page()
+    user = flask.session['user']
 
     contacts = contact.query_contacts(user)
     return render_template('contacts.html', contacts=contacts)
