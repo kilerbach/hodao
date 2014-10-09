@@ -7,6 +7,7 @@ Created on 2014-9-2
 
 import sys
 reload(sys).setdefaultencoding('utf8')
+import logging
 import logging.config
 import os
 
@@ -26,9 +27,31 @@ C.load_config(os.path.join(DEPLOYMENT_DIR, 'config.json'))
 application.secret_key = C.SERVER_SESSION_KEY
 application.debug = C.DEBUG
 
-# register views
-from hodao.views import *
-from hodao.apis import *
+_logger = logging.getLogger(__name__)
+
+
+def import_module(package):
+    m = __import__(package)
+    current = os.path.dirname(m.__file__)
+
+    if '.' in package:
+        apppath = os.path.join(current, *package.split('.')[1:])
+    else:
+        apppath = current
+
+    submodules = []
+    for fname in os.listdir(apppath):
+        if not fname.endswith('.py') or fname.startswith('_'):
+            continue
+
+        submodules.append(fname[:-3])
+
+    _logger.info('Load modules %s from package `%s`.', submodules, package)
+    __import__(package, fromlist=submodules)
+
+
+import_module('hodao.apis')
+import_module('hodao.views')
 
 
 def main():
