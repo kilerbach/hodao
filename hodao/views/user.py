@@ -11,8 +11,10 @@ from hodao.core import application, C
 from hodao import util
 from hodao.util import NeedLoginException
 
+user = flask.Blueprint('user', __name__)
 
-@application.route('/login', methods=['GET', 'POST'])
+
+@user.route('/', methods=['GET', 'POST'])
 def login():
     u = request.values.get('u')
     t = request.values.get('t')
@@ -30,15 +32,18 @@ def login():
     return flask.redirect('/order/create')
 
 
-@application.route('/login/' + C.SERVER_MANAGEMENT_MAGIC_WORD)
+@user.route('/' + C.SERVER_MANAGEMENT_MAGIC_WORD)
 def admin_login():
     flask.session['user'] = ''
     flask.session['admin'] = 1
     return flask.redirect('/order/manage')
 
 
-@application.route('/login/publicuser')
+@user.route('/publicuser')
 def public_login():
     flask.session['user'] = 'publicuser'
     flask.session['admin'] = 0
     return flask.redirect('/order')
+
+
+application.register_blueprint(user, url_prefix='/login')

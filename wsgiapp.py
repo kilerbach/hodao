@@ -58,6 +58,8 @@ def main():
     host, port = '0.0.0.0', 8080
     debug = C.DEBUG
 
+    print application.url_map
+
     application.run(host, port, debug, use_reloader=False)
     
 if __name__ == '__main__':
