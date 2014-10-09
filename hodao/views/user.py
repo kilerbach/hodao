@@ -6,11 +6,10 @@ Author: ilcwd
 
 import flask
 from flask import request
-# noinspection PyUnresolvedReferences
-from flask.ext.paginate import Pagination
 
 from hodao.core import application, C
 from hodao import util
+from hodao.util import NeedLoginException
 
 
 @application.route('/login', methods=['GET', 'POST'])
@@ -21,7 +20,7 @@ def login():
     redirect_url = request.values.get('next')
 
     if not (u and t and s) or not util.valid_request(s, u, t):
-        return render_login_page()
+        raise NeedLoginException()
 
     flask.session['user'] = u
     flask.session['admin'] = 0
