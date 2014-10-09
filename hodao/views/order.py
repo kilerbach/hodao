@@ -7,8 +7,7 @@ from collections import defaultdict
 
 import flask
 from flask import render_template, request
-# noinspection PyUnresolvedReferences
-from flask.ext.paginate import Pagination
+from flask_paginate import Pagination
 
 from hodao.core import application
 from hodao.models import order, contact
