@@ -10,9 +10,29 @@ import uuid
 from flask import render_template, session, request
 
 from hodao.core import application, C
-
+from hodao.util import NeedLoginException, NeedSuperException
 
 _logger = logging.getLogger(__name__)
+
+
+@application.errorhandler(NeedLoginException)
+def handle_need_login(ex):
+    return render_template(
+        'error.html',
+        msg=u'请先登录~',
+        raw=u"""<p class="white-font">如何登陆？</p>
+        <p class="white-font">请使用微信搜索公众号：
+            <a class="rich_media_meta link nickname" href="weixin://addfriend/gh_073d2ed7bb43"
+               id="post-user">Ho道</a>
+        </p>
+        <p class="white-font">关注成功后回复<b>A</b>就可以跳转至此页面。</p>
+        """
+    ), 401
+
+
+@application.errorhandler(NeedSuperException)
+def handle_400(ex):
+    return render_template('error.html', msg=u'需要管理员权限'), 401
 
 
 @application.errorhandler(500)
