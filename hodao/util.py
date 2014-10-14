@@ -10,6 +10,18 @@ import urllib
 from hodao.core import C
 
 
+class HodaoException(Exception):
+    pass
+
+
+class NeedLoginException(HodaoException):
+    pass
+
+
+class NeedSuperException(HodaoException):
+    pass
+
+
 def sign_request(*a):
     params = list(a)
     params.append(C.SERVER_SIGNATURE_KEY)
