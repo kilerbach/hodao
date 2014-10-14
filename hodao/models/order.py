@@ -43,11 +43,28 @@ def query_all_orders(pagination=1, page_size=5):
     if pagination < 1:
         return []
 
+    today = datetime.date.today()
+
+    # two days one page.
+    paging_step = 2
+
+    # if today is 2014-10-15, date of end is 2014-10-14,
+    # so need to 1 day ahead.
+    end = today - datetime.timedelta(days=paging_step*pagination - 1)
+    start = end + datetime.timedelta(days=paging_step)
+
     session = DBSession()
-    total = session.query(Order).count()
-    query = session.query(Order).order_by(Order.created_time.desc())\
-        .offset((pagination-1)*page_size)\
-        .limit(page_size)
+    last_record = session.query(Order).order_by(Order.created_time).limit(1).one()
+
+    # ext.paginate use `total` to calculate how many pages,
+    # so we provide a dummy one
+    total = (today - last_record.created_time.date()).days / paging_step * page_size + 1
+
+    if pagination == 1:
+        query = session.query(Order).filter(Order.created_time >= end)
+    else:
+        query = session.query(Order).filter(Order.created_time < start)\
+            .filter(Order.created_time >= end)
     return total, query.all()
 
 
