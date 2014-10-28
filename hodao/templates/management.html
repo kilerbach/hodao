@@ -13,7 +13,7 @@
     <div>{{ pagination.links|safe }}</div>
 
 
-    <button type="button" id="btnToggleOrders" class="btn btn-info">隐藏已完成订单</button>
+    <button type="button" id="btnToggleOrders" class="btn btn-info" onclick="toggleHiddenOrder(this);">隐藏已完成订单</button>
 
     <div class="table-responsive"  style="background-color: #FFF" >
 
@@ -86,18 +86,17 @@
     <script src="//lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
     <script src="/static/ghostheader.js"></script>
     <script>
-        $("#btnToggleOrders").click(function () {
-          if (this.innerHTML == "隐藏已完成订单") {
+        function toggleHiddenOrder(btn) {
+          if (btn.innerHTML == "隐藏已完成订单") {
             $(".hd-finished-order").css("display", "none")
             $(".hd-finished-order").addClass("row-true-hidden");
-            this.innerHTML = "显示已完成订单";
+            btn.innerHTML = "显示已完成订单";
           } else {
-
             $(".hd-finished-order").css("display", "table-row").removeClass("row-true-hidden");;
-            this.innerHTML = "隐藏已完成订单";
+            btn.innerHTML = "隐藏已完成订单";
           }
           stripedTableRow();
-        });
+        };
 
         function stripedTableRow() {
             var children = $("tbody").children();
@@ -113,9 +112,7 @@
                     counter++;
                 }
             }
-        }
-
-        stripedTableRow();
+        };
 
         function submitUpdateOrder(order_id, status){
           $.post("/ajax/order/update",
@@ -145,10 +142,12 @@
                     }
                 }
 
-
-
           })
         };
+
+        $(document).ready(function() {
+            toggleHiddenOrder(document.getElementById("btnToggleOrders"));
+        });
     </script>
 
   {% include 'footer.html' %}
