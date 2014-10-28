@@ -34,6 +34,19 @@ def express_service():
     return text_reply(from_user, to_user, content)
 
 
+@wechatapp.text('H')
+@wechatapp.text('h')
+def hoshop_service():
+    from_user = flask.g.wechat['ToUserName']
+    to_user = flask.g.wechat['FromUserName']
+
+    content = (
+        """【<a href="%s">猛戳蓝字</a>】\n"""
+        """浏览Hoshop"""
+    ) % util.make_hoshop_url(to_user)
+    return text_reply(from_user, to_user, content)
+
+
 @wechatapp.text(C.SERVER_MANAGEMENT_MAGIC_WORD)
 def express_service():
     from_user = flask.g.wechat['ToUserName']
