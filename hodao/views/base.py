@@ -7,7 +7,7 @@ import traceback
 import logging
 import uuid
 
-from flask import render_template, session, request
+from flask import render_template, session, request, blueprints
 
 from hodao.core import application, C
 from hodao.util import NeedLoginException, NeedSuperException
@@ -15,7 +15,10 @@ from hodao.util import NeedLoginException, NeedSuperException
 _logger = logging.getLogger(__name__)
 
 
-@application.errorhandler(NeedLoginException)
+app = blueprints.Blueprint('web', __name__)
+
+
+@app.errorhandler(NeedLoginException)
 def handle_need_login(ex):
     return render_template(
         'error.html',
@@ -30,32 +33,32 @@ def handle_need_login(ex):
     ), 401
 
 
-@application.errorhandler(NeedSuperException)
+@app.errorhandler(NeedSuperException)
 def handle_400(ex):
     return render_template('error.html', msg=u'需要管理员权限'), 401
 
 
-@application.errorhandler(500)
-def error_handler(ex):
-    _logger.error("Exception <%s>, Traceback: %s", str(ex), traceback.format_exc())
-    return render_template('error.html', msg=u'服务器异常'), 500
+# @app.errorhandler(500)
+# def error_handler(ex):
+#     _logger.error("Exception <%s>, Traceback: %s", str(ex), traceback.format_exc())
+#     return render_template('error.html', msg=u'服务器异常'), 500
 
 
-@application.errorhandler(400)
+@app.errorhandler(400)
 def handle_400(ex):
     return render_template('error.html', msg=u'参数错误'), 400
 
 
-@application.errorhandler(404)
+@app.errorhandler(404)
 def handle_404(ex):
     return render_template('error.html', msg=u'没有找到该网页'), 404
 
 
-@application.before_request
+@app.before_request
 def csrf_protect():
 
     # exceptions ~
-    if request.path == C.WECHAT_API:
+    if request.path.startswith((C.WECHAT_API, '/api')):
         return
 
     if request.method == "POST":
