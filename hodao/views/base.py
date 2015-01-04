@@ -4,6 +4,7 @@
 Author: ilcwd
 """
 import traceback
+import os
 import logging
 import uuid
 
@@ -15,7 +16,8 @@ from hodao.util import NeedLoginException, NeedSuperException
 _logger = logging.getLogger(__name__)
 
 
-app = blueprints.Blueprint('web', __name__)
+STATIC_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
+app = blueprints.Blueprint('web', __name__, static_folder=STATIC_FOLDER)
 
 
 @app.errorhandler(NeedLoginException)

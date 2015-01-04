@@ -4,7 +4,7 @@
 Author: ilcwd
 """
 
-from .base import application
+from .base import app as application
 
 
 @application.route('/static/<name>')
