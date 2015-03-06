@@ -42,7 +42,7 @@ def hoshop_service():
     to_user = flask.g.wechat['FromUserName']
 
     content = (
-        """男生宿舍【<a href="%s">请点击蓝字</a>】\n"""
+        """进入Ho-shop【<a href="%s">请点击蓝字</a>】\n"""
         """寻求合作请回复：E"""
     ) % util.make_hoshop_url(to_user)
     return text_reply(from_user, to_user, content)
@@ -133,7 +133,7 @@ def subscribe_msg():
 
     content = (
         """星海用Ho道！生活无难度～/礼物/礼物\n\n"""
-        """进入Ho道【<a href="%s">猛戳蓝字</a>】\n"""
+        """点击蓝字进入【<a href="%s">Ho道菜单</a>】\n"""
         # """B. Ho-shop\n"""
         # """C. Ho道大喇叭\n"""
         # """D. 寻求合作\n"""
@@ -153,7 +153,8 @@ def help_msg():
     to_user = flask.g.wechat['FromUserName']
 
     content = (
-        """<a href="%s">如没有得到满意回复，猛戳此处</a>\n"""
+        """星海用Ho道！生活无难度～/礼物/礼物\n\n"""
+        """点击蓝字进入【<a href="%s">Ho道菜单</a>】\n"""
         %
         (
             util.make_auth_url(to_user, redirect='/order/create'),
