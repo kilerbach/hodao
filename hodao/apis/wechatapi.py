@@ -132,14 +132,17 @@ def subscribe_msg():
     to_user = flask.g.wechat['FromUserName']
 
     content = (
-        """星海用Ho道！生活无难度～/礼物/礼物\n"""
-        """Ho道 服务如下：\n"""
-        """A. 快递代理\n"""
-        """B. Ho-shop\n"""
-        """C. Ho道大喇叭\n"""
-        """D. 寻求合作\n"""
-        """E. 人工服务\n"""
-        """如回复：A\n"""
+        """星海用Ho道！生活无难度～/礼物/礼物\n\n"""
+        """进入Ho道【<a href="%s">猛戳蓝字</a>】\n"""
+        # """B. Ho-shop\n"""
+        # """C. Ho道大喇叭\n"""
+        # """D. 寻求合作\n"""
+        # """E. 人工服务\n"""
+        # """如回复：A\n"""
+        %
+        (
+            util.make_auth_url(to_user, redirect='/order/create'),
+        )
     )
     return text_reply(from_user, to_user, content)
 
@@ -150,12 +153,10 @@ def help_msg():
     to_user = flask.g.wechat['FromUserName']
 
     content = (
-        """没有得到满意的回复？\n"""
-        """请回复，如：A\n"""
-        """A. 快递代理\n"""
-        """B. Ho-shop\n"""
-        """C. Ho道大喇叭\n"""
-        """D. 寻求合作\n"""
-        """E. 人工服务\n"""
+        """<a href="%s">如没有得到满意回复，猛戳此处</a>\n"""
+        %
+        (
+            util.make_auth_url(to_user, redirect='/order/create'),
+        )
     )
     return text_reply(from_user, to_user, content)

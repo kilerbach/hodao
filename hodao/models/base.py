@@ -9,7 +9,7 @@ from contextlib import contextmanager
 import inspect
 
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String, DateTime, BIGINT, BOOLEAN
+from sqlalchemy import Column, Integer, String, DateTime, BIGINT, BOOLEAN, VARBINARY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Index
@@ -67,6 +67,33 @@ class Contact(Base):
 
 
 Index('_idx_contact_user', Contact.user)
+
+
+class User(Base):
+    __tablename__ = 'user'
+    userid = Column(Integer, primary_key=True, autoincrement=True)
+
+    created_time = Column(DateTime(), nullable=False)
+    modified_time = Column(DateTime(), nullable=False)
+    enable = Column(BOOLEAN, nullable=False)
+
+
+class Login(Base):
+    __tablename__ = 'login'
+    autoid = Column(Integer, primary_key=True, autoincrement=True)
+    userid = Column(Integer, nullable=False)
+
+    loginid = Column(String(250), nullable=False)
+    logintype = Column(Integer, nullable=False)
+    password = Column(VARBINARY(250), nullable=False)
+
+    created_time = Column(DateTime(), nullable=False)
+    modified_time = Column(DateTime(), nullable=False)
+    enable = Column(BOOLEAN, nullable=False)
+
+
+Index('_idx_login_userid', Login.userid)
+Index('_uidx_login_logintype_loginid', Login.logintype, Login.loginid, unique=True)
 
 
 # Create an engine that stores data in the local directory's

@@ -20,6 +20,15 @@ from .util import check_login, check_super, check_login_or_super
 def index():
     user = flask.session['user']
     contacts = contact.query_contacts(user)
+    return render_template('index2.html', contacts=contacts)
+
+
+
+@application.route('/express')
+@check_login
+def create_order2():
+    user = flask.session['user']
+    contacts = contact.query_contacts(user)
     return render_template('index.html', contacts=contacts)
 
 
