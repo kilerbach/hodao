@@ -3,3 +3,4 @@ Flask
 SQLAlchemy
 flask-paginate
 git+https://github.com/ilcwd/wechat-server
+redis

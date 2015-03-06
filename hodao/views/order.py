@@ -9,7 +9,7 @@ import flask
 from flask import render_template, request
 from flask_paginate import Pagination
 
-from hodao.core import application
+from .base import app as application
 from hodao.models import order, contact
 from hodao.models.base import ORDER_STATUS_MAPPING
 from .util import check_login, check_super, check_login_or_super
@@ -18,6 +18,15 @@ from .util import check_login, check_super, check_login_or_super
 @application.route('/')
 @check_login
 def index():
+    user = flask.session['user']
+    contacts = contact.query_contacts(user)
+    return render_template('index2.html', contacts=contacts)
+
+
+
+@application.route('/express')
+@check_login
+def create_order2():
     user = flask.session['user']
     contacts = contact.query_contacts(user)
     return render_template('index.html', contacts=contacts)

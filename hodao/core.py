@@ -25,6 +25,13 @@ class C(object):
     SERVER_MANAGEMENT_MAGIC_WORD = None
     WECHAT_API = None
 
+    # if current hour is between NEXT_DAY_ORDER_START_HOUR and NEXT_DAY_ORDER_END_HOUR
+    # set order's create time at 0:00 next day.
+    NEXT_DAY_ORDER_START_HOUR = None
+    NEXT_DAY_ORDER_END_HOUR = None
+
+    SESSION_REDIS = None
+
     @classmethod
     def load_config(cls, config_file):
         content = {}

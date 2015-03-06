@@ -44,6 +44,19 @@ def make_auth_url(user, redirect='/order/create'):
     return C.SERVER_LOGIN_URL + '?' + urllib.urlencode(query_string)
 
 
+def make_hoshop_url(user):
+    u = str(user)
+    t = str(int(time.time()))
+    s = sign_request(u, t)
+
+    query_string = {
+        'u': u,
+        't': t,
+        's': s,
+    }
+    return r'http://www.ho-dao.com/hoshop/user/hodaologin' + '?' + urllib.urlencode(query_string)
+
+
 def valid_request(s, u, t):
     # expired
     if abs(int(t) - time.time()) > C.LOGIN_URL_EXPIRES:

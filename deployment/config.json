@@ -16,5 +16,13 @@
 
     "LOGIN_URL_EXPIRES": 600000,
 
-    "WECHAT_API": "/api/wechat"
+    "WECHAT_API": "/api/wechat",
+
+    "NEXT_DAY_ORDER_START_HOUR":  11,
+    "NEXT_DAY_ORDER_END_HOUR": 24,
+
+    "SESSION_REDIS": {
+        "host": "127.0.0.1",
+        "port": "6380"
+    }
 }

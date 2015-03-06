@@ -5,10 +5,8 @@ Author: ilcwd
 """
 import flask
 from flask import render_template
-# noinspection PyUnresolvedReferences
-from flask.ext.paginate import Pagination
 
-from hodao.core import application
+from .base import app as application
 from hodao.models import contact
 from .util import check_login
 

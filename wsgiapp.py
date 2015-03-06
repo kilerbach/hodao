@@ -30,29 +30,13 @@ application.debug = C.DEBUG
 _logger = logging.getLogger(__name__)
 
 
-def import_module(package):
-    m = __import__(package)
-    current = os.path.dirname(m.__file__)
-
-    if '.' in package:
-        apppath = os.path.join(current, *package.split('.')[1:])
-    else:
-        apppath = current
-
-    submodules = []
-    for fname in os.listdir(apppath):
-        if not fname.endswith('.py') or fname.startswith('_'):
-            continue
-
-        submodules.append(fname[:-3])
-
-    _logger.info('Load modules %s from package `%s`.', submodules, package)
-    __import__(package, fromlist=submodules)
+# initial routes.
+from hodao.apis import ajax, restfulapi, wechatapi
+from hodao.views import base, contact, order, static, user
 
 
-import_module('hodao.apis')
-import_module('hodao.views')
-
+application.register_blueprint(restfulapi.app, url_prefix='/api')
+application.register_blueprint(base.app, url_prefix='')
 
 def main():
     host, port = '0.0.0.0', 8080

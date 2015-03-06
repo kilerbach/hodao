@@ -5,6 +5,7 @@ Author: ilcwd
 """
 import datetime
 
+from hodao.core import C
 from .base import (
     log_costtime,
     create_session,
@@ -12,7 +13,6 @@ from .base import (
     OrderStatus,
     DBSession,
 )
-
 
 @log_costtime
 def create_order(user, name, company, phone, amount):
@@ -23,10 +23,16 @@ def create_order(user, name, company, phone, amount):
     # session.commit(). If you're not happy about the changes, you can
     # revert all of them back to the last commit by calling
     # session.rollback()
+
+    created_time = datetime.datetime.now()
+    if C.NEXT_DAY_ORDER_START_HOUR <= created_time.hour < C.NEXT_DAY_ORDER_END_HOUR:
+        next_day = created_time + datetime.timedelta(days=1)
+        created_time = datetime.datetime(next_day.year, next_day.month, next_day.day)
+
     with create_session() as session:
         for i in xrange(amount):
             new_order = Order(user=user, name=name, company=company, phone=phone, status=0,
-                              created_time=datetime.datetime.now(), modified_time=datetime.datetime.now())
+                              created_time=created_time, modified_time=created_time)
             session.add(new_order)
 
 

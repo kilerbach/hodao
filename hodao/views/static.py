@@ -4,7 +4,7 @@
 Author: ilcwd
 """
 
-from hodao.core import application
+from .base import app as application
 
 
 @application.route('/static/<name>')

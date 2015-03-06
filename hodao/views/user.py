@@ -7,14 +7,11 @@ Author: ilcwd
 import flask
 from flask import request
 
-from hodao.core import application, C
+from .base import app, C
 from hodao import util
 from hodao.util import NeedLoginException
 
-user = flask.Blueprint('user', __name__)
-
-
-@user.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     u = request.values.get('u')
     t = request.values.get('t')
@@ -32,18 +29,15 @@ def login():
     return flask.redirect('/order/create')
 
 
-@user.route('/' + C.SERVER_MANAGEMENT_MAGIC_WORD)
+@app.route('/login/' + C.SERVER_MANAGEMENT_MAGIC_WORD)
 def admin_login():
     flask.session['user'] = ''
     flask.session['admin'] = 1
     return flask.redirect('/order/manage')
 
 
-@user.route('/publicuser')
+@app.route('/login/publicuser')
 def public_login():
     flask.session['user'] = 'publicuser'
     flask.session['admin'] = 0
     return flask.redirect('/order')
-
-
-application.register_blueprint(user, url_prefix='/login')
