@@ -25,6 +25,8 @@ class C(object):
     SERVER_MANAGEMENT_MAGIC_WORD = None
     WECHAT_API = None
 
+    EXPRESS_DAILY_QUOTA = None
+
     # if current hour is between NEXT_DAY_ORDER_START_HOUR and NEXT_DAY_ORDER_END_HOUR
     # set order's create time at 0:00 next day.
     NEXT_DAY_ORDER_START_HOUR = None

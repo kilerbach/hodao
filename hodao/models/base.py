@@ -13,8 +13,19 @@ from sqlalchemy import Column, Integer, String, DateTime, BIGINT, BOOLEAN, VARBI
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Index
+import redis
 
 from hodao.core import C, spy_logger
+
+
+_redis_client = None
+
+def get_redis():
+    global _redis_client
+    if _redis_client is None:
+        _redis_client = redis.Redis(**C.SESSION_REDIS)
+
+    return _redis_client
 
 
 Base = declarative_base()
@@ -36,6 +47,15 @@ class Order(Base):
 
 Index('_idx_order_user', Order.user)
 Index('_idx_order_ctime', Order.created_time)
+
+
+class OrderExtAddress(Base):
+    __tablename__ = 'orderExtAddress'
+
+    orderid = Column(Integer, primary_key=True)
+    address = Column(String(250), nullable=False)
+    created_time = Column(DateTime(), nullable=False)
+
 
 
 class OrderTrack(Base):

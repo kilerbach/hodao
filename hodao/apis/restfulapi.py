@@ -29,7 +29,24 @@ def check_login(f):
 @app.route('/order/create', methods=['POST'])
 @check_login
 def create_order():
-    return jsonify({'s':'hello'})
+
+    phone = request.form['phone']
+    company = request.form['company']
+    name = request.form['name']
+    amount = int(request.form.get('amount', 1))
+    save_contact = request.form.get('savecontact', 'off') == 'on'
+
+    user = flask.session['user']
+    orderids = order.create_order(user, name, company, phone, amount)
+
+    address = request.form.get('address')
+    if orderids and address:
+        order.add_address_to_orders(address, orderids)
+
+    if save_contact:
+        contact.create_contact(user, name, phone)
+
+    return jsonify({'status': 0})
 
 
 @app.route('/order/sync', methods=['POST'])

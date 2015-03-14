@@ -10,6 +10,7 @@ from .base import (
     log_costtime,
     create_session,
     Order,
+    OrderExtAddress,
     OrderStatus,
     DBSession,
 )
@@ -29,11 +30,35 @@ def create_order(user, name, company, phone, amount):
         next_day = created_time + datetime.timedelta(days=1)
         created_time = datetime.datetime(next_day.year, next_day.month, next_day.day)
 
+    orderids = []
     with create_session() as session:
         for i in xrange(amount):
             new_order = Order(user=user, name=name, company=company, phone=phone, status=0,
                               created_time=created_time, modified_time=created_time)
             session.add(new_order)
+            session.flush()
+            orderids.append(new_order.id)
+
+    return orderids
+
+
+@log_costtime
+def add_address_to_orders(address, orderids):
+    if orderids:
+        created_time = datetime.datetime.now()
+        with create_session() as session:
+            for oid in orderids:
+                newo = OrderExtAddress(orderid=oid, address=address, created_time=created_time)
+                session.add(newo)
+    return
+
+
+@log_costtime
+def query_order_address(orderid):
+    session = DBSession()
+    addresses = session.query(OrderExtAddress).filter(OrderExtAddress.orderid == orderid).all()
+    if addresses:
+        return addresses[0]
 
 
 @log_costtime
