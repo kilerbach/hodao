@@ -21,8 +21,10 @@
     "NEXT_DAY_ORDER_START_HOUR":  11,
     "NEXT_DAY_ORDER_END_HOUR": 24,
 
+    "EXPRESS_DAILY_QUOTA": 30,
+
     "SESSION_REDIS": {
-        "host": "127.0.0.1",
-        "port": "6380"
+        "host": "redis.svr",
+        "port": "6379"
     }
 }

@@ -2,14 +2,14 @@
 <div class="row">
     <div class="col-sm-12">
         <ul class="nav nav-tabs navbar-inverse" role="tablist">
-          <li><a href="/">Ho道</a></li>
-          <li><a href="/">新建Ho单</a></li>
+          <li><a href="{{ url_for('web.index') }}">Ho道</a></li>
+          <li><a href="{{ url_for('web.create_order') }}">新建Ho单</a></li>
 
           {% if session.admin %}
-            <li><a href="/order/manage">管理Ho单</a></li>
+            <li><a href="{{ url_for('web.manage_orders') }}">管理Ho单</a></li>
           {% else%}
-            <li><a href="/order">追踪Ho单</a></li>
-            <li><a href="/contact">个人信息</a></li>
+            <li><a href="{{ url_for('web.show_orders') }}">追踪Ho单</a></li>
+            <li><a href="{{ url_for('web.query_contact') }}">个人信息</a></li>
           {% endif %}
 
         </ul>

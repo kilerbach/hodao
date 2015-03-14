@@ -10,7 +10,7 @@ from flask import render_template, request
 from flask_paginate import Pagination
 
 from .base import app as application
-from hodao.models import order, contact
+from hodao.models import order, contact, counter
 from hodao.models.base import ORDER_STATUS_MAPPING
 from .util import check_login, check_super, check_login_or_super
 
@@ -20,16 +20,17 @@ from .util import check_login, check_super, check_login_or_super
 def index():
     user = flask.session['user']
     contacts = contact.query_contacts(user)
-    return render_template('index2.html', contacts=contacts)
+    return render_template('index.html', contacts=contacts)
 
 
 
 @application.route('/express')
 @check_login
-def create_order2():
+def create_order():
     user = flask.session['user']
     contacts = contact.query_contacts(user)
-    return render_template('index.html', contacts=contacts)
+    quota = counter.query_left_express_daily_quota()
+    return render_template('create_order.html', contacts=contacts, quota=quota)
 
 
 @application.route('/order')
@@ -37,6 +38,11 @@ def create_order2():
 def show_orders():
     user = flask.session['user']
     orders = order.query_orders(user)
+    for o in orders:
+        address = order.query_order_address(o.id)
+        if address:
+            o.address = address.address
+
     return render_template('orders.html', orders=orders)
 
 
@@ -55,6 +61,9 @@ def manage_orders(page):
     for o in orders:
         date = _get_date(o.created_time)
         date_express_orders[date][o.company].append(o)
+        address = order.query_order_address(o.id)
+        if address:
+            o.address = address.address
 
     result = []
     for d, ex_ords in sorted(date_express_orders.items(), reverse=True):
@@ -73,7 +82,7 @@ def manage_orders(page):
 
 @application.route('/order/create', methods=['GET', 'POST'])
 @check_login
-def create_order():
+def create_order_do():
     if request.method == 'GET':
         return index()
 
@@ -82,12 +91,22 @@ def create_order():
     name = request.form['name']
     amount = int(request.form.get('amount', 1))
     save_contact = request.form.get('savecontact', 'off') == 'on'
+    address = request.form['address']
+
+    if address and counter.query_left_express_daily_quota() < 1:
+        return render_template('error.html', msg=u'今天的配额已经用完了！不能送货上门了！')
 
     user = flask.session['user']
-    order.create_order(user, name, company, phone, amount)
+    orderids = order.create_order(user, name, company, phone, amount)
 
     if save_contact:
         contact.create_contact(user, name, phone)
+
+    if address and orderids:
+        order.add_address_to_orders(address, orderids)
+
+    if address:
+        counter.minus_express_daily_quota()
 
     return flask.redirect('/order')
 

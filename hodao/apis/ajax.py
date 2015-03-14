@@ -77,3 +77,5 @@ def ajax_primary_contact():
         return jsonify({"status": 0, "error": u"成功"})
     else:
         return jsonify({"status": 1, "error": u"更新失败"})
+
+

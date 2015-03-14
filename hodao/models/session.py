@@ -10,11 +10,8 @@ import time
 import json
 import hashlib
 
-import redis
-
 from hodao.core import C
-
-_redis_client = None
+from .base import get_redis
 
 _DEFAULT_SESSION_EXPIRED_DAYS = 365
 _SESSION_KEY_PREFIX = "SSN:"
@@ -23,14 +20,6 @@ _SESSION_KEY_PREFIX = "SSN:"
 class SESSION_TYPE:
     UNKNOW = 'u'
     DEVICE = 'd'
-
-
-def _get_db():
-    global _redis_client
-    if _redis_client is None:
-        _redis_client = redis.Redis(**C.SESSION_REDIS)
-
-    return _redis_client
 
 
 def _format_key_in_db(token):
@@ -66,7 +55,7 @@ def create_session(userinfo, session_type=SESSION_TYPE.UNKNOW):
     token = _generate_token(userinfo['userid'], expires, session_type)
     db_key = _format_key_in_db(token)
 
-    _get_db().setex(db_key, _serialize_data(userinfo), expires*24*3600)
+    get_redis().setex(db_key, _serialize_data(userinfo), expires*24*3600)
     return token
 
 
@@ -77,7 +66,7 @@ def get_session(token):
     """
 
     db_key = _format_key_in_db(token)
-    return _deserialize_data(_get_db().get(db_key))
+    return _deserialize_data(get_redis().get(db_key))
 
 
 def main():

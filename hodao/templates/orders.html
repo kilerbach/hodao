@@ -31,7 +31,7 @@
             <tr class="{{ order_class_mapping.get(order.status, '') }}">
                 <td>{{ order.company }}</td>
                 <td>{{ order.name }}</td>
-                <td>{{ order.phone }}</td>
+                <td>{{ order.phone }} {% if order.address %}(配送至：{{ order.address }}){% endif %}</td>
 
                 <td><form method="post" action="/order/update">
                     <input name="_csrf_token" type=hidden value="{{ csrf_token() }}">
